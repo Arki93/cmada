@@ -9,25 +9,24 @@
             </div>
         </div>
 
-        <div class="column is-3">
+        <div class="column is-5">
             <div class="field">
                 <label>Produit</label>
-                <div class="select">
-                    <select name="product" v-model="selectedProductId">
-                        <option value="">--Choisir un produit--</option>
-                        <option
-                            v-for="product in products"
-                            v-bind:key="product.id"
-                            v-bind:value="product.id"
-                        >
-                            {{ product.product_name }}
-                        </option>
-                    </select>
+                <div class="control">
+                    <v-select 
+                    :options="formattedProducts"
+                    :reduce="product => product.id"
+                    label="product_label"
+                    v-model="selectedProductId"
+                    searchable
+                    clearable
+                    placeholder="--Choisir un produit--"
+                    />
                 </div>
             </div>
         </div>
 
-        <div class="column is-2">
+        <div class="column is-1">
             <div class="field">
                 <label>Prix Unitaire</label>
                 <div class="control">
@@ -36,7 +35,16 @@
             </div>
         </div>
 
-        <div class="column is-2">
+        <div class="column is-1">
+            <div class="field">
+                <label>Remise</label>
+                <div class="control">
+                    <input type="number" class="input" v-model="item.item_reduction">
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-1">
             <div class="field">
                 <label>Quantité</label>
                 <div class="control">
@@ -54,7 +62,7 @@
             </div>
         </div>
 
-        <div class="column is-2">
+        <div class="column is-1">
             <div class="field">
                 <label>Total T.T.C.</label>
                 <div class="control">
@@ -76,10 +84,17 @@
 
 <script>
 import axios from 'axios';
-export default {
+import { defineComponent } from 'vue';
+import VSelect from 'vue3-select';
+import 'vue3-select/dist/vue3-select.css';
+
+export default defineComponent({
     name: 'ItemForm',
     props: {
         initialItem: Object
+    },
+    components: {
+    'v-select': VSelect,
     },
     data() {
         return {
@@ -102,22 +117,41 @@ export default {
             } else {
                 this.item.unit_price = 0
                 this.item.tva = 0
+                this.item.item_reduction = 0
             }
         }
     },
     computed: {
+        formattedProducts() {
+            return this.products.map(product => ({
+            ...product,
+            product_label: `${product.product_id}-${product.product_name}`
+            }))
+        },
         total_ttc() {
             const unit_price = this.item.unit_price;
             const quantity = this.item.quantity;
             const tva = this.item.tva;
+            const reduction = this.item.item_reduction;
             
-            this.item.total = unit_price * quantity;
+            if (reduction !== 0) {
 
-            this.$emit('updatePrice', this.item);
+                this.item.total = parseFloat(((unit_price *(1-reduction/100)) * quantity).toFixed(2));
+                
+                this.$emit('updatePrice', this.item);
 
-            const tot_ttc = this.item.total + (this.item.total * (tva / 100));
+                const tot_ttc = this.item.total + (this.item.total * (tva / 100));
 
-            return parseFloat(tot_ttc.toFixed(2));
+                return parseFloat(tot_ttc.toFixed(2));
+            } else {
+                this.item.total = parseFloat((unit_price * quantity).toFixed(2));
+
+                this.$emit('updatePrice', this.item);
+
+                const tot_ttc = this.item.total + (this.item.total * (tva / 100));
+
+                return parseFloat(tot_ttc.toFixed(2));
+            }
         }
     },
     methods: {
@@ -135,5 +169,5 @@ export default {
             })
         },
     }
-}
+})
 </script>

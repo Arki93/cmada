@@ -38,6 +38,7 @@
                             <td>Produit</td>
                             <td>Quantité</td>
                             <td>Total H.T.</td>
+                            <td>Reduction</td>
                         </tr>
                     </thead> 
 
@@ -50,6 +51,7 @@
                             <td>{{ item.item_name }}</td>
                             <td>{{ item.quantity }}</td>
                             <td>{{ item.total }}</td>
+                            <td v-if="item.item_reduction != 0">{{ item.item_reduction }}%</td>
                         </tr>
                     </tbody>
                 </table>
@@ -67,10 +69,11 @@
 
                         <div class="column is-6 justify-flex">
                             <p><strong>Total H.T: </strong>{{ invoice.total_ht }}€</p>
+                            <p v-if="invoice.invoice_reduction != 0">-Reduction: {{ invoice.invoice_reduction }}€</p>
                             <p><strong>T.V.A: </strong>{{ invoice.total_tva }}€</p>
                             <p>Dont:</p>
-                            <p>-T.V.A 5: {{ invoice.tva_5 }}€</p>
-                            <p>-T.V.A 20: {{ invoice.tva_20 }}€</p>
+                            <p v-if="invoice.tva_5 != 0">-T.V.A 5: {{ invoice.tva_5 }}€</p>
+                            <p v-if="invoice.tva_20 != 0">-T.V.A 20: {{ invoice.tva_20 }}€</p>
                             <p><strong>Total T.T.C: </strong>{{ invoice.total_ttc }}€</p>
                         </div>
                     </div>

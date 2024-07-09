@@ -79,6 +79,7 @@
             <h2 class="is-size-5 mb-4">Total</h2>
 
             <p><strong>Total H.T.:</strong> {{ invoice.total_ht }}€</p>
+            <p v-if="invoice.invoice_reduction != 0">-Reduction: {{ invoice.invoice_reduction }}€</p>
             <p><strong>T.V.A:</strong> {{ invoice.total_tva }}€</p>
             <p v-if="invoice.tva_5 != 0 || invoice.tva_20 != 0">Dont:</p>
             <p v-if="invoice.tva_5 != 0">-T.V.A 5.5%: {{ invoice.tva_5 }}€</p>
@@ -118,7 +119,8 @@ export default {
                        unit_price: '',
                        quantity: 1,
                        tva: 0,
-                       total: 0
+                       total: 0,
+                       item_reduction: 0,
                    }
                ],
                due_date: '',
@@ -126,7 +128,8 @@ export default {
                total_tva: 0,
                tva_5: 0,
                tva_20: 0,
-               total_ttc: 0
+               total_ttc: 0,
+               invoice_reduction: 0
            },
            clients: []
        }
@@ -153,7 +156,8 @@ export default {
                 unit_price: '',
                 quantity: 1,
                 tva: 0,
-                total_ht: 0
+                total_ht: 0,
+                item_reduction: 0,
            })
         },
         removeItem(index) {
@@ -163,13 +167,14 @@ export default {
            let total_ht = 0
            let tva_20 = 0
            let tva_5 = 0
-           let tva = 0
+           let reduction = 0
 
            let item = this.invoice.items.filter(i => i.item_num === changedItem.item_num)
 
            item = changedItem
            for (let i = 0; i < this.invoice.items.length; i++) {
                const tx_tva = this.invoice.items[i].tva
+               const tx_red = this.invoice.items[i].item_reduction
 
                if (tx_tva == 5.5) {
                    tva_5 += this.invoice.items[i].total * (tx_tva/100)
@@ -177,17 +182,21 @@ export default {
                else{
                    tva_20 += this.invoice.items[i].total * (tx_tva/100)
                }
-
-               tva += this.invoice.items[i].total * (tx_tva/100)
+               
+               if (tx_red != 0) {
+                    reduction += this.invoice.items[i].quantity * this.invoice.items[i].unit_price * (tx_red/100)
+               }
                total_ht += this.invoice.items[i].total
            }
+
+           const tva = tva_5 + tva_20;
 
            this.invoice.total_ht = parseFloat(total_ht.toFixed(2))
            this.invoice.total_tva = parseFloat(tva.toFixed(2))
            this.invoice.tva_20 = parseFloat(tva_20.toFixed(2))
            this.invoice.tva_5 = parseFloat(tva_5.toFixed(2))
            this.invoice.total_ttc = parseFloat((total_ht + tva).toFixed(2))
-           this.invoice.reduction = 0
+           this.invoice.invoice_reduction = parseFloat(reduction.toFixed(2))
          },
         submitForm() {
            

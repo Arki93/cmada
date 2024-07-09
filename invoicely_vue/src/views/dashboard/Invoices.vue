@@ -8,12 +8,24 @@
         </nav>
 
         <div class="columns is-multiline">
-            <div class="column is-6">
+            <div class="column is-12">
                 <h1 class="title">Factures</h1>
             </div>
-            <div class="column is-6 is-flex is-justify-content-flex-end">
+
+            <div class="column is-6">
                 <router-link to="/dashboard/factures/add" class="button is-light">Nouvelle Facture</router-link>
             </div>
+
+            <div class="column is-6 is-flex is-justify-content-flex-end">
+                <div class="level-item">
+                    <div class="field has-addons">
+                      <p class="control">
+                        <input class="input" type="text" placeholder="Rechercher une Facture" v-model="searchQuery"/>
+                      </p>
+                    </div>
+                </div>
+            </div>
+
             <div class="column is-12">
                 <table class="table is-fullwidth is-striped">
                     <thead>
@@ -30,7 +42,7 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="invoice in invoices"
+                            v-for="invoice in filteredInvoices"
                             v-bind:key="invoice.id"
                         >
                             <td><router-link :to="{ name: 'Facture', params: { id: invoice.id }}">{{ invoice.invoice_number }}</router-link></td>
@@ -84,6 +96,7 @@ export default {
     name: 'Factures',
     data() {
         return {
+            searchQuery: '',
             invoices: []
         }
     },
@@ -98,6 +111,13 @@ export default {
             return this.invoice.get_payment_check[1]
         }
     }, */
+    computed: {
+        filteredInvoices() {
+            return this.invoices.filter(invoice => 
+                invoice.client_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                invoice.invoice_number.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        }
+    },
     methods: {
         getInvoices() {
             axios

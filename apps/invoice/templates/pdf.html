@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Invoice</title>
-
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
         <style>
             * {
                 margin: 0;
@@ -221,6 +221,17 @@
                 height: auto; /* Maintain aspect ratio */
                 display: block; /* Prevents extra space below images */
             }
+            .no-left-right-border {
+                border-collapse: collapse; /* Ensures borders are not doubled */
+              }
+                .no-left-right-border th, .no-left-right-border td {
+                border-left: 1px solid transparent; /* Removes left border */
+                border-right: 1px solid transparent; /* Removes right border */
+                border-top: 1px solid #ddd; /* Optional: adds top border */
+                border-bottom: 1px solid #ddd; /* Optional: adds bottom border */
+                text-align: center;
+                
+                }
         </style>
     </head>
 
@@ -246,8 +257,8 @@
 
             <div class="top-center">
                 <div class="fact">
-                    <h3 class="centered-text">FACTURE</h3>
-                    <h3  class="centered-text">{{ invoice.invoice_number }}</h3>
+                    <h3 class="centered-text"><strong>FACTURE</strong></h3>
+                    <h3  class="centered-text"><strong>{{ invoice.invoice_number }}</strong></h3>
                     <div class="centered-text">
                         <p><strong>Emis le: </strong>{{ invoice.created_at|date:"j F Y" }}</p>
                         <p><strong>Due au: </strong>{{ invoice.due_date }}</p>
@@ -268,33 +279,32 @@
             </div>
         </div>
 
-        <div class="items">
-            <div class="items-row">
-                <div class="items-row-cell header title">Produit</div>
-
-                <div class="items-row-cell header quantity">Quantité</div>
-
-                <div class="items-row-cell header unit-price">Prix Unitaire</div>
-
-                <div class="items-row-cell header vat-rate">T.V.A</div>
-
-                <div class="items-row-cell header sum">Prix T.T.C.</div>
-
+        <table class="table is-striped is-fullwidth is-bordered no-left-right-border" style="margin-top: 40px;">
+            <thead>
+                <tr class="has-text-centered">
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire</th>
+                    <th>T.V.A</th>
+                    <th>Prix T.T.C.</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for item in invoice.items.all %}
-                    <div class="items-row">
-                        <div class="items-row-cell title">{{ item.item_name }}</div>
-
-                        <div class="items-row-cell quantity">{{ item.quantity }}</div>
-
-                        <div class="items-row-cell unit-price">{{ item.unit_price }}€</div>
-
-                        <div class="items-row-cell vat-rate">{{ item.get_tva }}€</div>
-
-                        <div class="items-row-cell sum">{{ item.get_total_ttc }}€</div>
-                    </div>
+                <tr class="has-text-centered">
+                    {% if item.item_reduction != 0 %}
+                        <td>{{ item.item_name }} - Remise {{ item.item_reduction }}%</td>
+                    {% else %}
+                        <td>{{ item.item_name }}</td>
+                    {% endif %}
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_price }}€</td>
+                    <td>{{ item.get_tva }}€</td>
+                    <td>{{ item.get_total_ttc }}€</td>
+                </tr>
                 {% endfor %}
-            </div>
-        </div>
+            </tbody>
+        </table>
         
         <div class="invoice-details-container">
             <div class="invoice-right">
@@ -302,7 +312,12 @@
                     <div class="split-left">Total H.T.:</div>
                     <div class="split-right">{{ invoice.total_ht }}€</div>
                 </div>
-
+                {% if invoice.invoice_reduction != 0 %}
+                <div class="split">
+                    <div class="split-left" style="font-size: 14px; color: #888;">-Remise: </div>
+                    <div class="split-right" style="font-size: 14px; color: #888;">{{ invoice.invoice_reduction }}€</div>
+                </div>
+                {% endif %}
                 <div class="split">
                     <div class="split-left">T.V.A.:</div>
                     <div class="split-right">{{ invoice.total_tva }}€</div>
@@ -336,7 +351,7 @@
 
         <div class="summary">
             <div class="summary-title">
-                <h2>Payable par virement bancaire</hé>
+                <h2>Payable par virement bancaire</h2>
             </div>
 
             <div class="summary-left">

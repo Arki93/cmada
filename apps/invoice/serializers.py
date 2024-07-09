@@ -17,7 +17,7 @@ class ItemSerializer(serializers.ModelSerializer):
             'unit_price',
             'total',
             'tva',
-            'reduction',
+            'item_reduction',
         )
 
 
@@ -52,7 +52,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             'tva_5',
             'tva_20',   
             'total_ttc', 
-            'reduction',
+            'invoice_reduction',
             'client',
             'is_paid',
             'items',

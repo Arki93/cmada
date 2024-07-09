@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Dashboard from '../views/dashboard/Dashboard.vue'
 import Account from '../views/dashboard/Account.vue'
-import SignUp from '../views/SignUp.vue'
+/* import SignUp from '../views/SignUp.vue' */
 import LogIn from '../views/LogIn.vue'
 import Clients from '../views/dashboard/Clients.vue'
 import Client from '../views/dashboard/Client.vue'
@@ -15,6 +15,7 @@ import NewInvoice from '../views/dashboard/NewInvoice.vue'
 import Products from '../views/dashboard/Products.vue'
 import AddProduct from '../views/dashboard/AddProduct.vue'
 import Product from '../views/dashboard/Product.vue'
+import UpdateProduct from '../views/dashboard/UpdateProduct.vue'
 
 import store from '../store'
 
@@ -35,14 +36,14 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
-  {
+  /* {
     path: '/sign-up',
     name: 'SignUp',
     component: SignUp,
     meta: {
       title: 'CMada CRM | Création de Compte'
     }
-  },
+  }, */
   {
     path: '/login',
     name: 'LogIn',
@@ -166,6 +167,15 @@ const routes = [
     meta: {
       requireLogin: true,
       title: 'CMada CRM | Détail Produit'
+    }
+  },
+  {
+    path: '/dashboard/products/:id/update-product',
+    name: 'UpdateProduct',
+    component: UpdateProduct,
+    meta: {
+      requireLogin: true,
+      title: 'CMada CRM | Modifier Produit'
     }
   },
 

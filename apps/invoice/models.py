@@ -34,7 +34,7 @@ class Invoice(models.Model):
     tva_5 = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     tva_20 = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     total_ttc = models.DecimalField(max_digits=6, decimal_places=2)
-    reduction = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    invoice_reduction = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     team = models.ForeignKey(Team, related_name='factures', on_delete=models.CASCADE, null=True, blank=True)
     client = models.ForeignKey(Client, related_name='factures', on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, related_name='creater_factures', on_delete=models.CASCADE)
@@ -47,14 +47,15 @@ class Invoice(models.Model):
 
     def generate_invoice_number(self):
         # Define the base format for the invoice number
-        date_str = now().strftime('%Y%m%d')
+        date_str = now().strftime('%Y')
+        last_d = now().strftime('%d%m')
         last_invoice = Invoice.objects.filter(invoice_number__startswith='F' + date_str).order_by('invoice_number').last()
         if last_invoice:
-            last_number = last_invoice.invoice_number[-4:]
+            last_number = last_invoice.invoice_number[5:8]
         else:
             last_number = 0
         new_number = int(last_number) + 1
-        return f'F{date_str}-{new_number:04d}'
+        return f'F{date_str}{new_number:03d}-{last_d}'
     
     """ def get_payment_check(self):
         if not self.due_date:
@@ -86,7 +87,7 @@ class Item(models.Model):
     unit_price = models.DecimalField(max_digits=6, decimal_places=2,default=0)
     total = models.DecimalField(max_digits=6, decimal_places=2)
     tva = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    reduction = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    item_reduction = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
     def get_total_ttc(self):
         tva = decimal.Decimal(self.tva/100)

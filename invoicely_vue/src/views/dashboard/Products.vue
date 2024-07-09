@@ -9,8 +9,20 @@
         <div class="columns is-multiline">
             <div class="column is-12">
                 <h1 class="title">Produits</h1>
+            </div>
 
+            <div class="column is-6">
                 <router-link :to="{ name: 'AddProduct' }" class="button is-light mt-4">Ajouter un produit</router-link>
+            </div>
+
+            <div class="column is-6 is-flex is-justify-content-flex-end">
+                <div class="level-item">
+                    <div class="field has-addons">
+                      <p class="control">
+                        <input class="input" type="text" placeholder="Rechercher un Produits" v-model="searchQuery"/>
+                      </p>
+                    </div>
+                </div>
             </div>
 
             <div class="column is-12">
@@ -27,7 +39,7 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="product in products"
+                            v-for="product in filteredPosts"
                             v-bind:key="product.id"
                         >
                             <td><router-link :to="{ name: 'Product', params: { id: product.id }}">{{ product.product_id }}</router-link></td>
@@ -50,11 +62,20 @@ export default {
     name: 'Products',
     data() {
         return {
+            searchQuery: '',
             products: [] 
         }
     },
     mounted() {
         this.getProduits()
+    },
+    computed: {
+        filteredPosts() {
+            return this.products.filter(product => 
+                product.product_name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                product.product_id.toLowerCase().includes(this.searchQuery.toLowerCase())
+            )
+        }
     },
     methods: {
         getProduits() {

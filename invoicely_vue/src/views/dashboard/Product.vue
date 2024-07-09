@@ -12,7 +12,7 @@
             <div class="column is-12">
                 <h1 class="Title">{{ product.product_name }}</h1>
 
-                <!-- <router-link :to="{ name: 'Updateproduct', params: { id: product.id }}" class="button is-light mt-4">Modifier</router-link> -->
+                <router-link :to="{ name: 'UpdateProduct', params: { id: product.id }}" class="button is-light mt-4">Modifier</router-link>
             </div>
 
             <div class="column is-6">
@@ -24,12 +24,12 @@
                 <p v-if="product.on_going_command">{{ product.on_going_command }}</p>
             </div>
 
-            <div class="column is-6">
+            <!-- <div class="column is-6">
                 <p><strong>Quantité: </strong>{{  }}</p>
                 <p><strong>Derniere MaJ: </strong>{{ stock.created_at }}</p>
-            </div>
+            </div> -->
 
-            <div class="column is-12">
+            <!-- <div class="column is-12">
                 <div class="box">
                     <h2 class="subtitle">Produits</h2>
 
@@ -60,7 +60,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> -->
 
             
         </div>
@@ -76,12 +76,12 @@ export default {
     data() {
         return {
             product: {},
-            stock: []
+            /* stock: [] */
         }
     },
     mounted() {
-        this.getProduct(),
-        this.getStock()
+        this.getProduct()
+        /* this.getStock() */
     },
     methods: {
         async getProduct() {
@@ -98,8 +98,8 @@ export default {
         },
         formatDate(date) {
             return format(new Date(date), 'dd.MM.yy')
-        },
-        getStock() {
+        }
+        /* getStock() {
             axios
                 .get('api/v1/stock')
                 .then(response => {
@@ -112,7 +112,7 @@ export default {
                 .catch(error => {
                     console.log(JSON.stringify(error))
                 })
-        }
+        } */
     }
 }
 </script>

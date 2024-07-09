@@ -7,7 +7,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
 
-        read_only = (
+        read_only_fields = (
             'created_by',
             'modified_by',
         ),

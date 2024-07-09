@@ -24,6 +24,11 @@ class Product(models.Model):
                 return 20
             else:
                 return 5.5
+            
+    def custom_title_case(self, s):
+        exceptions = {'de', 'au', 'et', 'à', 'la', 'aux'}
+        return ' '.join(word.capitalize() if word not in exceptions else word for word in s.split())
+
   
     def __str__(self):
         return f'{self.product_id} {self.product_name}'
@@ -31,5 +36,7 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if not self.tva:
             self.tva = self.set_tva()
+        if self.product_name:
+            self.product_name = self.custom_title_case(self.product_name)
         super().save(*args, **kwargs)
 
