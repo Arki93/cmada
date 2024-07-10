@@ -45,6 +45,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             'client_cp',
             'client_pays', 
             'invoice_type',
+            'client_ville',
             'due_date', 
             'is_sent',
             'total_ht', 
