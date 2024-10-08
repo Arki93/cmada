@@ -28,8 +28,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         obj = self.get_object()
 
-        if self.request.user != obj.created_by:
-            raise PermissionDenied('Modification Impossible')
+        ''' if self.request.user != obj.created_by:
+            raise PermissionDenied('Modification Impossible') '''
 
         serializer.save()
 

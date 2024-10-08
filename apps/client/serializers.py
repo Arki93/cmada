@@ -38,3 +38,5 @@ class ClientSerializer(serializers.ModelSerializer):
             'tel_number',
             'invoices',
         )
+    
+    

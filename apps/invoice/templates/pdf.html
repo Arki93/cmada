@@ -244,14 +244,14 @@
         <div class="top">
             <div class="top-left">
                 <div class="invoicely">
-                    <h3>{{ team.team_name }}</h3>
+                    <h3><strong>{{ team.team_name }}</strong></h3>
                     <p>{{ team.address }}</p>
                     <p>{{ team.code_postal }} {{ team.ville }}</p>
                     <p>{{ team.pays }}</p>
                     <p>{{ team.email }}</p>
                     <p><strong>RCS Paris</strong> {{ team.RCS }}</p>
                     <p><strong>SIRET</strong> {{ team.SIRET }}</p>
-                    <p>T<strong>TVA</strong> {{ team.TVA }}</p>
+                    <p><strong>TVA</strong> {{ team.TVA }}</p>
                 </div>
             </div>
 
@@ -270,7 +270,7 @@
             <div class="top-right">
                 <div class="split-right">
                     <div class="client">
-                        <h3>{{ invoice.client_name }}</h3>
+                        <h3><strong>{{ invoice.client_name }}</strong></h3>
                         <p>{{ invoice.client_address }}</p>
                         <p>{{ invoice.client_cp }} {{ invoice.client_ville }}</p>
                         <p>{{ invoice.client_pays }}</p>
@@ -291,16 +291,21 @@
             </thead>
             <tbody>
                 {% for item in invoice.items.all %}
-                <tr class="has-text-centered">
+                <tr >
                     {% if item.item_reduction != 0 %}
-                        <td>{{ item.item_name }} - Remise {{ item.item_reduction }}%</td>
+                        <td style="text-align: left">{{ item.item_name }} - Remise {{ item.item_reduction }}%</td>
                     {% else %}
-                        <td>{{ item.item_name }}</td>
+                        <td style="text-align: left">{{ item.item_name }}</td>
                     {% endif %}
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.unit_price }}€</td>
-                    <td>{{ item.get_tva }}€</td>
-                    <td>{{ item.get_total_ttc }}€</td>
+                    <td style="text-align: center">{{ item.quantity }}</td>
+                    {% if item.item_reduction != 0 %}
+                        <td style="text-align: center">{{ item.get_reduct_price }}€</td>
+                        <td style="text-align: center">{{ item.get_reduct_tva }}€</td>
+                    {% else %}
+                        <td style="text-align: center">{{ item.unit_price }}€</td>
+                        <td style="text-align: center">{{ item.get_tva }}€</td>
+                    {% endif %}
+                    <td style="text-align: center">{{ item.get_total_ttc }}€</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -318,27 +323,29 @@
                     <div class="split-right" style="font-size: 14px; color: #888;">{{ invoice.invoice_reduction }}€</div>
                 </div>
                 {% endif %}
-                <div class="split">
-                    <div class="split-left">T.V.A.:</div>
-                    <div class="split-right">{{ invoice.total_tva }}€</div>
-                </div>
-                <div class="split">
-                    <div class="split-left" style="font-size: 14px; color: #888;">Dont:</div>
-                    <div class="split-right"></div>
-                </div>
+                {% if invoice.total_tva %}
+                    <div class="split">
+                        <div class="split-left">T.V.A.:</div>
+                        <div class="split-right">{{ invoice.total_tva }}€</div>
+                    </div>
+                    <div class="split">
+                        <div class="split-left" style="font-size: 14px; color: #888;">Dont:</div>
+                        <div class="split-right"></div>
+                    </div>
 
-                {% if invoice.tva_5 %}
-                <div class="split">
-                    <div class="split-left" style="font-size: 14px; color: #888;">-T.V.A 5.5:</div>
-                    <div class="split-right" style="font-size: 14px; color: #888;">{{ invoice.tva_5 }}€</div>
-                </div>
-                {% endif %}
+                    {% if invoice.tva_5 %}
+                    <div class="split">
+                        <div class="split-left" style="font-size: 14px; color: #888;">-T.V.A 5.5:</div>
+                        <div class="split-right" style="font-size: 14px; color: #888;">{{ invoice.tva_5 }}€</div>
+                    </div>
+                    {% endif %}
 
-                {% if invoice.tva_20 %}
-                <div class="split">
-                    <div class="split-left" style="font-size: 14px; color: #888;">-T.V.A 20:</div>
-                    <div class="split-right" style="font-size: 14px; color: #888;">{{ invoice.tva_20 }}€</div>
-                </div>
+                    {% if invoice.tva_20 %}
+                    <div class="split">
+                        <div class="split-left" style="font-size: 14px; color: #888;">-T.V.A 20:</div>
+                        <div class="split-right" style="font-size: 14px; color: #888;">{{ invoice.tva_20 }}€</div>
+                    </div>
+                    {% endif %}
                 {% endif %}
 
                 <div class="split">

@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from apps.client.models import Client
 from apps.team.models import Team
 
-import decimal
+from decimal import Decimal
 
 class Invoice(models.Model):
     FACTURE = 'Facture'
@@ -44,6 +44,9 @@ class Invoice(models.Model):
 
     class Meta:
         ordering = ('-created_at',)
+        
+    def payment_check(self):
+        pass
 
     def generate_invoice_number(self):
         # Define the base format for the invoice number
@@ -81,21 +84,37 @@ class Invoice(models.Model):
 
 class Item(models.Model):
     invoice = models.ForeignKey(Invoice, related_name='items', on_delete=models.CASCADE)
+    item_num = models.CharField(max_length=255, blank=True, null=True)
     item_id = models.CharField(max_length=255, blank=True, null=True)
     item_name = models.CharField(max_length=255, blank=True, null=True)
-    quantity = models.DecimalField(max_digits=6, decimal_places=2, default=1)
+    quantity = models.DecimalField(max_digits=6, decimal_places=2, default=1)  
     unit_price = models.DecimalField(max_digits=6, decimal_places=2,default=0)
     total = models.DecimalField(max_digits=6, decimal_places=2)
     tva = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     item_reduction = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
+    
     def get_total_ttc(self):
-        tva = decimal.Decimal(self.tva/100)
-        return round(self.total + (self.total * tva),2)
+        tva = Decimal(self.tva) / 100
+        if self.item_reduction != 0:
+            subtotal = self.get_reduct_price() * self.quantity
+        else:
+            subtotal = self.unit_price * self.quantity
+            
+        return round(subtotal + (subtotal * tva), 2)
 
     def get_tva(self):
-        tva = decimal.Decimal(self.tva/100)
-        return round(self.unit_price * tva,2)
+        tva = Decimal(self.tva) / 100
+        return round(self.unit_price * tva, 2)
+
+    def get_reduct_price(self):
+        reduction = Decimal(self.item_reduction) / 100
+        return round(self.unit_price * (1 - reduction), 2)
+
+    def get_reduct_tva(self):
+        reduction_price = self.get_reduct_price()
+        tva = Decimal(self.tva) / 100
+        return round(reduction_price * tva, 2)
 
 
 

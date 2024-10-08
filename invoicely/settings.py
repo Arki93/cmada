@@ -36,7 +36,9 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 
+        'drf_spectacular.openapi.AutoSchema',
 }
 # Application definition
 
@@ -57,6 +59,8 @@ INSTALLED_APPS = [
     "apps.team",
     "apps.invoice",
     "apps.product",
+    "apps.stock",
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -90,6 +94,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "invoicely.wsgi.application"
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'My API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    # other settings
+}
 
 
 # Database

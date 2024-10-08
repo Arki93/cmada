@@ -12,11 +12,18 @@ class Product(models.Model):
     product_unit_price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     product_type = models.CharField(max_length=255, blank=True, null=True)
     on_going_command = models.IntegerField(default=0)
+    is_bio = models.BooleanField(default=False)
+    bio_id = models.CharField(max_length=255, blank=True, null=True)
+    is_vegan = models.BooleanField(default=False)
     minimun_stock = models.IntegerField(default=0)
     quantity = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     tva = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     created_by = models.ForeignKey(User, related_name='creater_product', on_delete=models.CASCADE)
     modified_by = models.ForeignKey(User, related_name='modifier_product', on_delete=models.CASCADE)
+     
+    
+    class Meta:
+        ordering = ('product_type', 'product_name',)
 
     def set_tva(self):
         if self.product_name:

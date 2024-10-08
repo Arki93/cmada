@@ -11,7 +11,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
 
-    def get_queryset(self):
+    ''' def get_queryset(self):
         return self.queryset.filter(created_by=self.request.user)
 
     def perform_create(self, serializer):
@@ -23,4 +23,4 @@ class ClientViewSet(viewsets.ModelViewSet):
         if self.request.user != obj.created_by:
             raise PermissionDenied('Suppression Impossible!')
 
-        serializer.save()
+        serializer.save() '''
